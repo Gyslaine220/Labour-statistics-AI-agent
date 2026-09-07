@@ -13,7 +13,7 @@ def calculate_unemployment_rate(unemployed, labour_force):
     return calculate_rate(unemployed, labour_force)
 
 
-# Function to calculate the labour force participation rate (LFPR)
+# Function to calculate the labour force participation rate (LFPR)    
 def calculate_lfpr(labour_force, working_age_population):
     if working_age_population <= 0:
         return None
@@ -33,5 +33,6 @@ def calculate_employment_rate(employed, working_age_population):
         return None
 
     return calculate_rate(employed, working_age_population)
+
   
   
