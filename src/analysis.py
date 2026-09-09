@@ -1,7 +1,10 @@
 
-import pandas as pd
 import os
+
+import pandas as pd
+
 print(os.getcwd())
+
 
 def load_data(filepath):
     if filepath.endswith(".dta"):
@@ -14,6 +17,7 @@ def load_data(filepath):
 
 def prepare_data(df):
     return df[df["wap16"] == 1]
+
 
 def calculate_rate(numerator, denominator):
     return (numerator / denominator) * 100
@@ -30,7 +34,7 @@ def calculate_unemployment_rate(unemployed, labour_force):
     return calculate_rate(unemployed, labour_force)
 
 
-# Function to calculate the labour force participation rate (LFPR)    
+# Function to calculate the labour force participation rate (LFPR)
 def calculate_lfpr(labour_force, working_age_population):
     if working_age_population <= 0:
         return None
@@ -50,7 +54,9 @@ def calculate_employment_rate(employed, working_age_population):
         return None
 
     return calculate_rate(employed, working_age_population)
-#Data Validation Function
+
+
+# Data Validation Function
 def validate_data(df):
     required_columns = ["status1", "wap16"]
 
@@ -60,9 +66,7 @@ def validate_data(df):
     ]
 
     if missing_columns:
-        raise ValueError(
-           f"Missing required columns: {missing_columns}"
-        )
+        raise ValueError(f"Missing required columns: {missing_columns}")
 
     return df
 
@@ -71,29 +75,43 @@ if __name__ == "__main__":
     df = load_data("Data/RW_LFS2024.dta")
     print("STATUS1:")
     print(df["status1"].value_counts(dropna=False).to_string())
-    #df = prepare_data(df)
-   # df = validate_data(df)
-   
-    working_age_population = (df["wap16"] == 1).sum()
-    labour_force = (
-        (df["status1"] == "Employed").sum()
-        + (df["status1"] == "Unemployed").sum()
+    df = prepare_data(df)
+    df = validate_data(df)
+
+    working_age_population = df.loc[
+        df["wap16"] == 1, "weight2"
+    ].sum()
+
+    employed = df.loc[
+        df["status1"] == "Employed", "weight2"
+    ].sum()
+
+    unemployed = df.loc[
+        df["status1"] == "Unemployed", "weight2"
+    ].sum()
+
+    labour_force = employed + unemployed
+
+    unemployment_rate = calculate_unemployment_rate(
+        unemployed,
+        labour_force,
     )
 
-    employed = (df["status1"] == "Employed").sum()
-    unemployed = (df["status1"] == "Unemployed").sum()
-    working_age_population = (df["wap16"] == 1).sum() if "wap16" in df.columns else len(df)
+    lfpr = calculate_lfpr(
+        labour_force,
+        working_age_population,
+    )
 
-    unemployment_rate = calculate_unemployment_rate(unemployed, labour_force)
-    lfpr = calculate_lfpr(labour_force, working_age_population)
-    employment_rate = calculate_employment_rate(employed, working_age_population)
+    employment_rate = calculate_employment_rate(
+        employed,
+        working_age_population,
+    )
 
+    print("Weighted Working Age Population:", working_age_population)
+    print("Weighted Labour Force:", labour_force)
+    print("Weighted Employed:", employed)
+    print("Weighted Unemployed:", unemployed)
     print("Unemployment Rate:", unemployment_rate, "%")
     print("Labour Force Participation Rate:", lfpr, "%")
     print("Employment Rate:", employment_rate, "%")
-    
-   
-  
-  
-
 
