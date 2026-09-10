@@ -1,13 +1,25 @@
 from analysis import (
+    calculate_rate,
     load_data,
     calculate_lfpr,
     calculate_unemployment_rate,
     calculate_employment_rate
 )
+from analysis import (
+    load_data,
+    calculate_lfpr,
+    calculate_unemployment_rate,
+    calculate_employment_rate
+)
+
+
 def ask_agent(question):
+    question = question.lower()
+
+    # Labour Force Participation Rate
     if (
-        "labour force participation rate" in question.lower()
-        or "lfpr" in question.lower()
+        "labour force participation rate" in question
+        or "lfpr" in question
     ):
         df = load_data("Data/RW_LFS2024.dta")
 
@@ -31,6 +43,37 @@ def ask_agent(question):
         )
 
         return f"The Labour Force Participation Rate is {lfpr:.2f}%."
+
+    # Unemployment Rate
+    if "unemployment rate" in question:
+        df = load_data("Data/RW_LFS2024.dta")
+
+        employed = df.loc[
+            df["status1"] == "Employed", "weight2"
+        ].sum()
+
+        unemployed = df.loc[
+            df["status1"] == "Unemployed", "weight2"
+        ].sum()
+
+        labour_force = employed + unemployed
+
+        unemployment_rate = calculate_unemployment_rate(
+            unemployed,
+            labour_force
+        )
+
+        return f"The unemployment rate is {unemployment_rate:.2f}%."
+
+    return "I don't know how to answer that yet."
+
+
 print(ask_agent("What is the LFPR?"))
-        
-    
+print(ask_agent("What is the unemployment rate?"))
+
+# checking whether the agent can answer questions asked differently
+print(ask_agent("What is the LFPR?"))
+print(ask_agent("What is the labour force participation rate?"))
+print(ask_agent("What is the unemployment rate?"))
+print(ask_agent("Can you tell me the unemployment rate?"))
+print(ask_agent("What is the employment rate?"))

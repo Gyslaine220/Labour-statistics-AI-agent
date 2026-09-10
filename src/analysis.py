@@ -166,3 +166,4 @@ if __name__ == "__main__":
     print("Youth Employment Rate:", youth_employment_rate, "%")
     print("Youth NEET:", youth_neet)
     print("Youth NEET Rate:", youth_neet_rate, "%")
+    print(calculate_unemployment_rate(780225.75, 5224910))
