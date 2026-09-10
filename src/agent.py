@@ -1,4 +1,5 @@
 from analysis import (
+    load_data,
     calculate_lfpr,
     calculate_unemployment_rate,
     calculate_employment_rate
