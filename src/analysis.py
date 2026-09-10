@@ -114,4 +114,55 @@ if __name__ == "__main__":
     print("Unemployment Rate:", unemployment_rate, "%")
     print("Labour Force Participation Rate:", lfpr, "%")
     print("Employment Rate:", employment_rate, "%")
+    
+    # Youth labour-market indicators
 
+youth_data = df[df["young"] == 1]
+
+youth_working_age_population = youth_data["weight2"].sum()
+
+youth_employed = youth_data.loc[
+    youth_data["status1"] == "Employed", "weight2"
+].sum()
+
+youth_unemployed = youth_data.loc[
+    youth_data["status1"] == "Unemployed", "weight2"
+].sum()
+
+youth_labour_force = youth_employed + youth_unemployed
+
+youth_lfpr = calculate_lfpr(
+    youth_labour_force,
+    youth_working_age_population
+)
+
+youth_unemployment_rate = calculate_unemployment_rate(
+    youth_unemployed,
+    youth_labour_force
+)
+
+youth_employment_rate = calculate_employment_rate(
+    youth_employed,
+    youth_working_age_population
+)
+
+# Youth NEET rate
+youth_neet = youth_data.loc[
+    youth_data["neetyoung"] == 1, "weight2"
+].sum()
+
+youth_neet_rate = calculate_rate(
+    youth_neet,
+    youth_working_age_population
+)
+
+print("\n--- Youth Labour-Market Indicators (Age 16–30) ---")
+print("Youth Working-Age Population:", youth_working_age_population)
+print("Youth Labour Force:", youth_labour_force)
+print("Youth Employed:", youth_employed)
+print("Youth Unemployed:", youth_unemployed)
+print("Youth LFPR:", youth_lfpr, "%")
+print("Youth Unemployment Rate:", youth_unemployment_rate, "%")
+print("Youth Employment Rate:", youth_employment_rate, "%")
+print("Youth NEET:", youth_neet)
+print("Youth NEET Rate:", youth_neet_rate, "%")
